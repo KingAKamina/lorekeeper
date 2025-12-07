@@ -77,6 +77,9 @@ Route::group(['prefix' => 'files', 'middleware' => 'power:edit_site_settings'], 
     Route::post('folder/delete', 'FileController@postDeleteFolder');
     Route::post('folder/rename', 'FileController@postRenameFolder');
 });
+Route::group(['prefix' => 'laravel-filemanager', 'middleware' => 'power:edit_site_settings'], function () {
+    \UniSharp\LaravelFilemanager\Lfm::routes();
+});
 
 // LOG VIEWER
 Route::group(['prefix' => 'logs', 'middleware' => 'power:edit_site_settings'], function () {

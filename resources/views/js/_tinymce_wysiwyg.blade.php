@@ -18,7 +18,34 @@
                 '{{ asset('css/lorekeeper.css') }}'
             ],
             spoiler_caption: 'Toggle Spoiler',
-            target_list: false
+            target_list: false,
+            @if(Auth::user()->hasPower('edit_site_settings'))
+            file_picker_callback: function (callback, value, meta) {
+                let x = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+                let y = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+
+                // Match folder_category key exactly (case-sensitive)
+                let type = 'file';
+                if (meta.filetype === 'image') type = 'image';
+
+                let cmsURL = '/admin/laravel-filemanager?type=' + type + '&editor=' + meta.fieldname;
+
+                tinymce.activeEditor.windowManager.openUrl({
+                    url: cmsURL,
+                    title: 'File Manager (Admin Only)',
+                    width: x * 0.8,
+                    height: y * 0.8,
+                    resizable: true,
+                    close_previous: false,
+
+                    onMessage: function (api, message) {
+                        // This is what actually inserts the URL into TinyMCE
+                        callback(message.content);
+                        api.close();
+                    }
+                });
+            },
+            @endif
         });
 @if (!isset($tinymceScript) || $tinymceScript)
     });
