@@ -173,7 +173,38 @@
                         '{{ asset('css/lorekeeper.css') }}'
                     ],
                     spoiler_caption: 'Toggle Spoiler',
-                    target_list: false
+                    target_list: false,
+
+                    @if(Auth::user()->hasPower('edit_site_settings'))
+                    file_picker_callback: function (callback, value, meta) {
+                        let x = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+                        let y = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+
+                        let type = 'file';
+                        if (meta.filetype === 'image') type = 'image';
+
+                        let cmsURL = '/admin/laravel-filemanager?type=' + type + '&editor=' + (meta.fieldname ?? '');
+
+                        // External Window (TinyMCE 6 does not support openUrl/open)
+                        const w = x * 0.8;
+                        const h = y * 0.8;
+                        const left = (x - w) / 2;
+                        const top = (y - h) / 2;
+
+                        const fileWindow = window.open(
+                            cmsURL,
+                            'FileManager',
+                            `width=${w},height=${h},left=${left},top=${top},resizable=yes`
+                        );
+
+                        // LFM calls this function
+                        window.SetUrl = function (item) {
+                            callback(item.url);
+                            fileWindow.close();
+                        };
+                    },
+                    @endif
+
                 });
                 bsCustomFileInput.init();
                 var $mobileMenuButton = $('#mobileMenuButton');

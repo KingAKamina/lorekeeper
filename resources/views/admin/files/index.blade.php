@@ -5,6 +5,22 @@
 @endsection
 
 @section('admin-content')
+
+    {!! breadcrumbs(['Admin Panel' => 'admin', 'Files' => 'admin/files']) !!}
+
+    <h1>File Manager</h1>
+
+    <p>This manager allows you to upload files onto your server and create folders using LFM (Laravel File Manager) from Unisharp.</p>
+
+    <div class="card mb-4">
+        <div class="card-body p-0" style="height: 80vh;">
+            <iframe src="{{ url('/admin/laravel-filemanager') }}" style="width: 100%; height: 100%; border: none;"></iframe>
+        </div>
+    </div>
+
+<!-----------------------------------------------------------
+  -> Old File Manager
+-------------------------------------------------------------
     {!! breadcrumbs(['Admin Panel' => 'admin', 'Files' => 'admin/files'] + ($folder ? [$folder => 'admin/files/' . $folder] : [])) !!}
 
     <h1>File Manager / {!! $folder ? $folder . ' <a href="' . url('admin/files/') . '" class="btn btn-success float-right">Back to Root</a>' : 'Root' !!}</h1>
@@ -283,4 +299,5 @@
             });
         });
     </script>
+------------------------------------------------------------->
 @endsection
