@@ -6,6 +6,18 @@
 |--------------------------------------------------------------------------
 | online  => http://unisharp.github.io/laravel-filemanager/config
 | offline => vendor/unisharp/laravel-filemanager/docs/config.md
+|
+|--------------------------------------------------------------------------
+| Note by Kamina (KingAKamina) :
+|--------------------------------------------------------------------------
+| As an external extension I didn't made the file manager, it was
+| made for all users to sue but I limitted it to only admins and
+| technically nothing here should  be editted unless you don't want
+| thumbnails or know about Unisharp's LFM.
+| Ah also, thumbnail files save in a secret folder that you will
+| only see in the site files, not on the site, I suggest leaving it
+| like that or disabling thumbnails completely
+| 
  */
 
 return [
@@ -26,7 +38,7 @@ return [
     |
      */
 
-    'allow_private_folder'     => false,
+    'allow_private_folder'     => false, // Private folders aren't really needed
 
     // Flexible way to customize client folders accessibility
     // If you want to customize client folders, publish tag="lfm_handler"
@@ -37,7 +49,7 @@ return [
 
     'allow_shared_folder'      => true,
 
-    'shared_folder_name'       => null,
+    'shared_folder_name'       => null, // Changing this will make a new folder inside /files
 
     /*
     |--------------------------------------------------------------------------
@@ -47,7 +59,7 @@ return [
 
     'folder_categories'        => [
         'file'  => [
-            'folder_name'  => null,
+            'folder_name'  => null, // Changing this will make a new folder inside /files
             'startup_view' => 'list',
             'max_size'     => 50000, // size in KB
             'thumb'        => true,
@@ -63,7 +75,7 @@ return [
             ],
         ],
         'image' => [
-            'folder_name'  => null,
+            'folder_name'  => null, // Changing this will make a new folder inside /files
             'startup_view' => 'grid',
             'max_size'     => 50000, // size in KB
             'thumb'        => true, // disable auto thumbs

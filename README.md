@@ -75,3 +75,15 @@ You will need to send yourself the verification email and then link your social 
 ## Contact
 
 If you have any questions, please feel free to ask in the Discord server: https://discord.gg/U4JZfsu
+
+# File Manager Extension
+Documentation for this extension :
+
+online  => http://unisharp.github.io/laravel-filemanager/config
+offline => vendor/unisharp/laravel-filemanager/docs/config.md
+
+Pull & Run (first is optional)
+```
+php artisan vendor:publish --tag=lfm_public
+php artisan storage:link
+```

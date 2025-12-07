@@ -18,7 +18,9 @@
         </div>
     </div>
 
-<!--
+<!-----------------------------------------------------------
+  -> Old File Manager
+-------------------------------------------------------------
     {!! breadcrumbs(['Admin Panel' => 'admin', 'Files' => 'admin/files'] + ($folder ? [$folder => 'admin/files/' . $folder] : [])) !!}
 
     <h1>File Manager / {!! $folder ? $folder . ' <a href="' . url('admin/files/') . '" class="btn btn-success float-right">Back to Root</a>' : 'Root' !!}</h1>
@@ -297,5 +299,5 @@
             });
         });
     </script>
-                    -->
+------------------------------------------------------------->
 @endsection
