@@ -12,7 +12,10 @@
     <p>This is a list of currency categories that will be used to sort currencies. Creating currency categories is entirely optional, but recommended if you have a lot of currencies in the game.</p>
     <p>The sorting order reflects the order in which currency categories will be displayed in the bank, as well as on the world pages.</p>
 
-    <div class="text-right mb-3"><a class="btn btn-primary" href="{{ url('admin/data/currency-categories/create') }}"><i class="fas fa-plus"></i> Create New Currency Category</a></div>
+    <div class="text-right mb-3">
+        <a class="btn btn-secondary" href="{{ url('admin/data/currencies') }}"><i class="fas fa-undo"></i> Return to Currencies</a>
+        <a class="btn btn-primary" href="{{ url('admin/data/currency-categories/create') }}"><i class="fas fa-plus"></i> Create New Currency Category</a>
+    </div>
 
     @if (!count($categories))
         <p>No currency categories found.</p>
