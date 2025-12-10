@@ -33,7 +33,7 @@
             'Gear' => 'Gear',
             'Weapon' => 'Weapon',
             'Exp' => 'Exp',
-            'Points' => 'Stat Points'
+            'Points' => 'Stat Points',
         ] +
         ($showLootTables ? ['LootTable' => 'Loot Table'] : []) +
         ($showRaffles ? ['Raffle' => 'Raffle Ticket'] : []);
@@ -117,16 +117,15 @@
                     ]),
                 ];
             });
-        $stats = \App\Models\Character\CharacterStat::all()
-            ->mapWithKeys(function ($stat) {
-                return [
-                    $stat->id => json_encode([
-                        'name' => $stat->name,
-                        // 'image_url' => $stat->imageUrl,
-                    ]),
-                ];
-            });
-            
+        $stats = \App\Models\Character\CharacterStat::all()->mapWithKeys(function ($stat) {
+            return [
+                $stat->id => json_encode([
+                    'name' => $stat->name,
+                    // 'image_url' => $stat->imageUrl,
+                ]),
+            ];
+        });
+
         if ($showLootTables) {
             $tables = \App\Models\Loot\LootTable::orderBy('name')
                 ->get()
