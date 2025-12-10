@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin\Data;
 use App\Http\Controllers\Controller;
 use App\Models\Currency\Currency;
 use App\Models\Item\Item;
-use App\Models\Pet\Pet;
 use App\Models\Shop\Shop;
 use App\Models\Shop\ShopStock;
 use App\Services\ShopService;
