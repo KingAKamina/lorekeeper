@@ -718,3 +718,8 @@ Route::group(['prefix' => 'typing', 'middleware' => 'power:edit_data', 'namespac
 Route::group(['prefix' => 'limits', 'middleware' => 'power:manage_data'], function () {
     Route::post('/', 'LimitController@postCreateEditLimits');
 });
+
+// REWARDS
+Route::group(['prefix' => 'rewards', 'middleware' => 'power:manage_data'], function () {
+    Route::post('/', 'RewardController@postPopulateRewards');
+});

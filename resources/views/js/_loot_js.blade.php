@@ -1,39 +1,62 @@
+@php
+    if (!isset($prefix)) {
+        $prefix = '';
+    }
+
+    // View options
+    if (!isset($showRecipient)) {
+        $showRecipient = false;
+    }
+    if (!isset($showLootTables)) {
+        $showLootTables = false;
+    }
+    if (!isset($showRaffles)) {
+        $showRaffles = false;
+    }
+@endphp
 <script>
     $(document).ready(function() {
-        var $lootTable = $('#lootTableBody');
-        var $lootRow = $('#lootRow').find('.loot-row');
-        var $itemSelect = $('#lootRowData').find('.item-select');
-        var $WeaponSelect = $('#lootRowData').find('.weapon-select');
-        var $GearSelect = $('#lootRowData').find('.gear-select');
-        var $petSelect = $('#lootRowData').find('.pet-select');
-        var $currencySelect = $('#lootRowData').find('.currency-select');
-        var $statSelect = $('#lootRowData').find('.stat-select');
-        var $claymoreSelect = $('#lootRowData').find('.claymore-select');
+        var $lootTable = $('#{{ $prefix }}lootTableBody');
+        var $lootRow = $('#{{ $prefix }}lootRow').find('.loot-row');
+        console.log($lootRow);
+        var $itemSelect = $('#{{ $prefix }}lootRowData').find('.item-select');
+        var $WeaponSelect = $('#{{ $prefix }}lootRowData').find('.weapon-select');
+        var $GearSelect = $('#{{ $prefix }}lootRowData').find('.gear-select');
+        var $petSelect = $('#{{ $prefix }}lootRowData').find('.pet-select');
+        var $currencySelect = $('#{{ $prefix }}lootRowData').find('.currency-select');
+        var $statSelect = $('#{{ $prefix }}lootRowData').find('.stat-select');
+        var $claymoreSelect = $('#{{ $prefix }}lootRowData').find('.claymore-select');
+        var $currencySelect = $('#{{ $prefix }}lootRowData').find('.currency-select');
         @if ($showLootTables)
-            var $tableSelect = $('#lootRowData').find('.table-select');
+            var $tableSelect = $('#{{ $prefix }}lootRowData').find('.table-select');
         @endif
         @if ($showRaffles)
-            var $raffleSelect = $('#lootRowData').find('.raffle-select');
+            var $raffleSelect = $('#{{ $prefix }}lootRowData').find('.raffle-select');
         @endif
 
         @if (isset($useCustomSelectize) && $useCustomSelectize)
-            $('#lootTableBody .selectize').selectize({
+            $('#{{ $prefix }}lootTableBody .selectize').selectize({
                 render: {
                     option: customLootSelectizeRender,
                     item: customLootSelectizeRender
                 }
             });
         @else
-            $('#lootTableBody .selectize').selectize();
+            $('#{{ $prefix }}lootTableBody .selectize').selectize();
         @endif
-        attachRemoveListener($('#lootTableBody .remove-loot-button'));
+        attachRemoveListener($('#{{ $prefix }}lootTableBody .remove-loot-button'));
 
-        $('#addLoot').on('click', function(e) {
+        $('#{{ $prefix }}addLoot').on('click', function(e) {
             e.preventDefault();
             var $clone = $lootRow.clone();
+            console.log($clone);
             $lootTable.append($clone);
             attachRewardTypeListener($clone.find('.reward-type'));
             attachRemoveListener($clone.find('.remove-loot-button'));
+            if ($clone.find('.loot-weight').length) {
+                attachWeightListener($clone.find('.loot-weight'));
+                refreshChances();
+            }
         });
 
         $('.reward-type').on('change', function(e) {
@@ -99,6 +122,35 @@
             node.on('click', function(e) {
                 e.preventDefault();
                 $(this).parent().parent().remove();
+            });
+        }
+
+        // Weight is a special field
+        // check if there is a '.loot-weight' element
+        if ($('#{{ $prefix }}lootTableBody .loot-weight').length) {
+            refreshChances();
+            attachWeightListener($('#{{ $prefix }}lootTableBody .loot-weight'));
+        }
+
+        function attachWeightListener(node) {
+            node.on('change', function(e) {
+                refreshChances();
+            });
+        }
+
+        function refreshChances() {
+            var total = 0;
+            var weights = [];
+            $('#{{ $prefix }}lootTableBody .loot-weight').each(function(index) {
+                var current = parseInt($(this).val());
+                total += current;
+                weights.push(current);
+            });
+
+
+            $('#{{ $prefix }}lootTableBody .loot-row-chance').each(function(index) {
+                var current = (weights[index] / total) * 100;
+                $(this).html(current.toString() + '%');
             });
         }
 

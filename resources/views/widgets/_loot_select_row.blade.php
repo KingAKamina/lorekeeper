@@ -2,8 +2,43 @@
     // This represents a common source and definition for assets used in loot_select
     // While it is not per se as tidy as defining these in the controller(s),
     // doing so this way enables better compatibility across disparate extensions
-    $type = isset($type) ? $type : 'Reward';
-    $isTradeable = isset($isTradeable) ? $isTradeable : false;
+
+    if (!isset($type)) {
+        $type = 'Reward';
+    }
+    if (!isset($isTradeable)) {
+        $isTradeable = false;
+    }
+    if (!isset($prefix)) {
+        $prefix = '';
+    }
+
+    // View options
+    if (!isset($showRecipient)) {
+        $showRecipient = false;
+    }
+    if (!isset($showLootTables)) {
+        $showLootTables = false;
+    }
+    if (!isset($showRaffles)) {
+        $showRaffles = false;
+    }
+
+    // Reward types, should reduce friction of merge conflicts
+    $rewardTypes =
+        [
+            'Item' => 'Item',
+            'Currency' => 'Currency',
+            'Pet' => 'Pet',
+            'Gear' => 'Gear',
+            'Weapon' => 'Weapon',
+            'Exp' => 'Exp',
+            'Points' => 'Stat Points'
+        ] +
+        ($showLootTables ? ['LootTable' => 'Loot Table'] : []) +
+        ($showRaffles ? ['Raffle' => 'Raffle Ticket'] : []);
+
+    // Custom Selectize
     if (isset($useCustomSelectize) && $useCustomSelectize) {
         $characterCurrencies = \App\Models\Currency\Currency::where('is_character_owned', 1)
             ->where(function ($query) use ($isTradeable) {
@@ -153,35 +188,57 @@
         }
     }
 @endphp
-<div id="lootRowData" class="hide">
+
+<div id="{{ $prefix }}lootRowData" class="hide">
     <table class="table table-sm">
-        <tbody id="lootRow">
+        <tbody id="{{ $prefix }}lootRow">
             <tr class="loot-row">
-                <td>{!! Form::select(
-                    'rewardable_type[]',
-                    ['Item' => 'Item', 'Currency' => 'Currency', 'Pet' => 'Pet', 'Gear' => 'Gear', 'Weapon' => 'Weapon', 'Exp' => 'Exp', 'Points' => 'Stat Points'] +
-                        ($showLootTables ? ['LootTable' => 'Loot Table'] : []) +
-                        ($showRaffles ? ['Raffle' => 'Raffle Ticket'] : []),
-                    null,
-                    ['class' => 'form-control reward-type', 'placeholder' => 'Select ' . $type . ' Type'],
-                ) !!}</td>
+                @if ($showRecipient)
+                    <td>
+                        {!! Form::select($prefix . 'rewardable_recipient[]', ['Character' => 'Character', 'User' => 'User'], 'User', [
+                            'class' => 'form-control',
+                            'placeholder' => 'Select Recipient Type',
+                        ]) !!}
+                    </td>
+                @endif
+                <td>
+                    {!! Form::select($prefix . 'rewardable_type[]', $rewardTypes, null, [
+                        'class' => 'form-control reward-type',
+                        'placeholder' => 'Select ' . $type . ' Type',
+                    ]) !!}
+                </td>
                 <td class="loot-row-select"></td>
-                <td>{!! Form::text('quantity[]', 1, ['class' => 'form-control']) !!}</td>
+                <td>{!! Form::text($prefix . 'quantity[]', 1, ['class' => 'form-control']) !!}</td>
+                @if (isset($extra_fields))
+                    @foreach ($extra_fields as $field => $data)
+                        <td>
+                            @php
+                                $field_name = $prefix . $field . '[]';
+                                $value = $data['default'] ?? null;
+                                $attributes = $data['attributes'] ?? [];
+                            @endphp
+                            {!! Form::{$data['type']}($field_name, $value, array_merge(['class' => 'form-control ' . ($data['class'] ?? ''), 'placeholder' => $data['label']], $attributes)) !!}
+                        </td>
+                        @if ($data['label'] == 'Weight')
+                            <td class="loot-row-chance"></td>
+                        @endif
+                    @endforeach
+                @endif
                 <td class="text-right"><a href="#" class="btn btn-danger remove-loot-button">Remove</a></td>
             </tr>
         </tbody>
     </table>
-    {!! Form::select('rewardable_id[]', $items, null, ['class' => 'form-control item-select', 'placeholder' => 'Select Item']) !!}
-    {!! Form::select('rewardable_id[]', $currencies, null, ['class' => 'form-control currency-select', 'placeholder' => 'Select Currency']) !!}
-    {!! Form::select('rewardable_id[]', $pets, null, ['class' => 'form-control pet-select', 'placeholder' => 'Select Pet']) !!}
-    {!! Form::select('rewardable_id[]', $weapons, null, ['class' => 'form-control weapon-select', 'placeholder' => 'Select Weapon']) !!}
-    {!! Form::select('rewardable_id[]', $gears, null, ['class' => 'form-control gear-select', 'placeholder' => 'Select Gear']) !!}
-    {!! Form::select('rewardable_id[]', $stats, null, ['class' => 'form-control stat-select', 'placeholder' => 'Select Stat']) !!}
-    {!! Form::select('rewardable_id[]', [0 => 1], 0, ['class' => 'form-control claymore-select hide', 'placeholder' => 'Enter Reward']) !!}
+    {!! Form::select($prefix . 'rewardable_id[]', $items, null, ['class' => 'form-control item-select', 'placeholder' => 'Select Item']) !!}
+    {!! Form::select($prefix . 'rewardable_id[]', $currencies, null, ['class' => 'form-control currency-select', 'placeholder' => 'Select Currency']) !!}
+    {!! Form::select($prefix . 'rewardable_id[]', $pets, null, ['class' => 'form-control pet-select', 'placeholder' => 'Select Pet']) !!}
+    {!! Form::select($prefix . 'rewardable_id[]', $weapons, null, ['class' => 'form-control weapon-select', 'placeholder' => 'Select Weapon']) !!}
+    {!! Form::select($prefix . 'rewardable_id[]', $gears, null, ['class' => 'form-control gear-select', 'placeholder' => 'Select Gear']) !!}
+    {!! Form::select($prefix . 'rewardable_id[]', $stats, null, ['class' => 'form-control stat-select', 'placeholder' => 'Select Stat']) !!}
+    {!! Form::select($prefix . 'rewardable_id[]', [0 => 1], 0, ['class' => 'form-control claymore-select hide', 'placeholder' => 'Enter Reward']) !!}
     @if ($showLootTables)
-        {!! Form::select('rewardable_id[]', $tables, null, ['class' => 'form-control table-select', 'placeholder' => 'Select Loot Table']) !!}
+        {!! Form::select($prefix . 'rewardable_id[]', $tables, null, ['class' => 'form-control table-select', 'placeholder' => 'Select Loot Table']) !!}
     @endif
     @if ($showRaffles)
-        {!! Form::select('rewardable_id[]', $raffles, null, ['class' => 'form-control raffle-select', 'placeholder' => 'Select Raffle']) !!}
+        {!! Form::select($prefix . 'rewardable_id[]', $raffles, null, ['class' => 'form-control raffle-select', 'placeholder' => 'Select Raffle']) !!}
     @endif
 </div>
